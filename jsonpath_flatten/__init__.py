@@ -62,7 +62,7 @@ class FlattenDict (object):
     return dict (self.flatten_item (d, parent_key, sep = sep))
 
   @logtool.log_call (log_args = False, log_rc = False)
-  def reduce_data (self):
+  def run (self):
     rc = dict ()
     discards = []
     flat = self.flatten (self.data)
@@ -70,16 +70,12 @@ class FlattenDict (object):
       if self.pattern_hit (key):
         discards.append (key)
         continue # Discard matches
-      key = key.lower ()
       if isinstance (value, str):
-        value = (value.strip () if isprintable (value)
+        # FIXME: Also need to handle Base64 UUIDs
+        value = (value if isprintable (value)
                  else binascii.b2a_hex (value))
       rc[key] = value
     return rc, discards
-
-  @logtool.log_call (log_args = False, log_rc = False)
-  def run (self):
-    return self.reduce_data ()
 
 @logtool.log_call (log_args = False)
 def jsonpath_flatten (data, patterns = None):
