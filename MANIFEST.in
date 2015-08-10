@@ -1,0 +1,5 @@
+include LICENSE
+include README.rst
+include requirements.txt
+include versioneer.py
+include jsonpath_flatten/_version.py
