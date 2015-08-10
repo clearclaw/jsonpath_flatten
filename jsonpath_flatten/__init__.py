@@ -70,10 +70,8 @@ class FlattenDict (object):
       if self.pattern_hit (key):
         discards.append (key)
         continue # Discard matches
-      if isinstance (value, str):
-        # FIXME: Also need to handle Base64 UUIDs
-        value = (value if isprintable (value)
-                 else binascii.b2a_hex (value))
+      if isinstance (value, str) and not isprintable (value):
+        value = value.encode ("hex")
       rc[key] = value
     return rc, discards
 
