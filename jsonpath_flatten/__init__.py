@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 
 from ._version import get_versions
-__version__ = get_versions()['version']
+__version__ = get_versions ()['version']
 __version_info__ = get_versions ()
 del get_versions
 
-import binascii, collections, fnmatch, logging, logtool, string
+import collections, fnmatch, logging, logtool, string
 
 LOG = logging.getLogger (__name__)
 
-@logtool.log_call
+# @logtool.log_call
 def isprintable (s):
   if isinstance (s, str):
     return (c in string.printable for c in s)
@@ -18,16 +18,8 @@ def isprintable (s):
 class FlattenDict (object):
 
   @logtool.log_call (log_args = False)
-  def __init__ (self, data, patterns = None):
+  def __init__ (self, data):
     self.data = data
-    self.patterns = patterns if patterns else []
-
-  # @logtool.log_call (log_args = False, log_rc = False)
-  def pattern_hit (self, key):
-    for pattern in self.patterns:
-      if fnmatch.fnmatch (key, pattern): # Discard matches
-        return True
-    return False
 
   # @logtool.log_call (log_args = False)
   def flatten_list (self, l, parent_key = '', sep = '.'):
@@ -58,23 +50,13 @@ class FlattenDict (object):
     return items
 
   @logtool.log_call (log_args = False, log_rc = False)
-  def flatten (self, d, parent_key = '', sep = '.'):
-    return dict (self.flatten_item (d, parent_key, sep = sep))
-
-  @logtool.log_call (log_args = False, log_rc = False)
-  def run (self):
-    rc = dict ()
-    discards = []
-    flat = self.flatten (self.data)
+  def run (self, parent_key = '', sep = '.'):
+    rc = dict (self.flatten_item (d, parent_key, sep))
     for key, value in flat.items ():
-      if self.pattern_hit (key):
-        discards.append (key)
-        continue # Discard matches
       if isinstance (value, str) and not isprintable (value):
-        value = value.encode ("hex")
-      rc[key] = value
-    return rc, discards
+        rc[key] = value.encode ("hex")
+    return flat
 
 @logtool.log_call (log_args = False)
-def jsonpath_flatten (data, patterns = None):
-  return FlattenDict (data, patterns).run ()
+def jsonpath_flatten (data = None):
+  return FlattenDict (data).run ()

@@ -25,6 +25,7 @@ class TestJSONParse_Flatten (unittest.TestCase):
           "type": "fax",
         },
       ],
+      "uuid": "\xbf;\x9d[\xb4>L\x99\x95\r\x9e/\xfc2O2",
     }
 
   def test_base (self):
@@ -41,31 +42,10 @@ class TestJSONParse_Flatten (unittest.TestCase):
       "phoneNumber[0].type": "home",
       "phoneNumber[1].number": "646 555-4567",
       "phoneNumber[1].type": "fax",
+      "uuid": "bf3b9d5bb43e4c99950d9e2ffc324f32",
     }
     data, discards = jsonpath_flatten.jsonpath_flatten (self.sample_dict)
     self.assertEqual (data, reference_dict)
-
-  def test_patterns (self):
-    patterns = ["address*", "*count",]
-    reference_dict = {
-      "age": 25,
-      "firstName": "John",
-      "lastName": "Smith",
-      "phoneNumber[0].number": "212 555-1234",
-      "phoneNumber[0].type": "home",
-      "phoneNumber[1].number": "646 555-4567",
-      "phoneNumber[1].type": "fax",
-    }
-    reference_discards = [
-      "address.city",
-      "address.postalCode",
-      "address.state",
-      "address.streetAddress",
-      "phoneNumber.#count",
-    ]
-    data, discards = jsonpath_flatten.jsonpath_flatten (self.sample_dict, patterns)
-    self.assertEqual (data, reference_dict)
-    self.assertEqual (sorted (discards), sorted (reference_discards))
 
 if __name__ == "__main__":
   unittest.main()
