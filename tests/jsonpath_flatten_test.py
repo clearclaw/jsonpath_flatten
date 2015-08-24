@@ -44,7 +44,7 @@ class TestJSONParse_Flatten (unittest.TestCase):
       "phoneNumber[1].type": "fax",
       "uuid": "bf3b9d5bb43e4c99950d9e2ffc324f32",
     }
-    data, discards = jsonpath_flatten.jsonpath_flatten (self.sample_dict)
+    data = jsonpath_flatten.jsonpath_flatten (self.sample_dict)
     self.assertEqual (data, reference_dict)
 
 if __name__ == "__main__":

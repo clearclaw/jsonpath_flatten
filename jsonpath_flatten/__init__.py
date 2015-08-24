@@ -12,7 +12,10 @@ LOG = logging.getLogger (__name__)
 # @logtool.log_call
 def isprintable (s):
   if isinstance (s, str):
-    return (c in string.printable for c in s)
+    for c in s:
+      if c not in string.printable:
+        return False
+    return True
   return False
 
 class FlattenDict (object):
@@ -51,11 +54,11 @@ class FlattenDict (object):
 
   @logtool.log_call (log_args = False, log_rc = False)
   def run (self, parent_key = '', sep = '.'):
-    rc = dict (self.flatten_item (d, parent_key, sep))
-    for key, value in flat.items ():
+    rc = dict (self.flatten_item (self.data, parent_key, sep))
+    for key, value in rc.items ():
       if isinstance (value, str) and not isprintable (value):
         rc[key] = value.encode ("hex")
-    return flat
+    return rc
 
 @logtool.log_call (log_args = False)
 def jsonpath_flatten (data = None):
