@@ -60,6 +60,6 @@ class FlattenDict (object):
         rc[key] = value.encode ("hex")
     return rc
 
-@logtool.log_call (log_args = False)
+@logtool.log_call (log_args = False, log_rc = False) # Because they can be big
 def jsonpath_flatten (data = None):
   return FlattenDict (data).run ()
